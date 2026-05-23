@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="konomi-swarm — the colony primitive. Every approve is a pheromone deposit. The next decision samples from the trail strength. Sovereign, single-file, drops into any tool with a binary outcome loop.">
+<meta property="og:title" content="konomi-swarm — the colony primitive">
+<meta property="og:description" content="One ant is information. A colony is intelligence. The shape is κ₂.thomas. The build is κ₀.simon. The lesson loop ships as one file.">
+<title>konomi-swarm — the colony primitive</title>
+<!-- ◊·κ=1 · prime 109 · shape: κ₂.thomas (swarm-mind) · build: κ₀.simon -->
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#06080a;--surface:#0c1014;--surface-2:#141a22;--surface-3:#1f2733;
+  --ink:#e8ecf3;--ink-2:#a8b2c1;--muted:#5b6573;
+  --border:#1f2733;--border-2:#2a3340;
+  --primary:#10b981;--primary-dark:#059669;--primary-light:rgba(16,185,129,.12);
+  --accent:#3b82f6;--accent-light:rgba(59,130,246,.12);
+  --warn:#f59e0b;--warn-light:rgba(245,158,11,.12);
+  --danger:#ef4444;--danger-light:rgba(239,68,68,.12);
+  --purple:#8b5cf6;--purple-light:rgba(139,92,246,.12);
+  --radius:8px;--radius-lg:14px;
+  --shadow:0 1px 3px rgba(0,0,0,.4);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.5);
+  --font:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --mono:'DM Mono',ui-monospace,Menlo,Consolas,monospace;
+  --max-w:980px;
+}
+body{background:var(--bg);color:var(--ink);font:15px/1.65 var(--font);min-height:100vh;-webkit-font-smoothing:antialiased}
+a{color:var(--primary);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .15s}
+a:hover{border-bottom-color:var(--primary)}
+h1{font:800 clamp(1.8rem,5vw,2.6rem)/1.1 var(--font);letter-spacing:-.025em}
+h2{font:700 clamp(1.2rem,3vw,1.6rem)/1.25 var(--font);letter-spacing:-.015em;margin:48px 0 14px}
+h3{font:600 11px var(--font);text-transform:uppercase;letter-spacing:.1em;color:var(--ink-2);margin-bottom:8px}
+code,pre,.mono{font:13px/1.5 var(--mono)}
+pre{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;overflow-x:auto;color:var(--ink-2)}
+pre code{color:var(--ink-2);background:transparent;padding:0}
+code{background:var(--surface);padding:1px 5px;border-radius:4px;color:var(--primary)}
+
+header{padding:18px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(6,8,10,.95);backdrop-filter:blur(8px);z-index:50}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-icon{width:34px;height:34px;background:var(--primary);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#06080a;font-weight:800;font-size:18px}
+.brand-text{font-weight:800;font-size:16px;letter-spacing:-.01em}
+.brand-text span{color:var(--primary)}
+.brand-badge{font:600 9px var(--mono);padding:2px 8px;border-radius:20px;background:var(--primary-light);color:var(--primary);letter-spacing:.08em;margin-left:6px}
+.nav-right{display:flex;gap:14px;align-items:center;font-size:13px}
+.nav-right a{color:var(--ink-2);border:none}
+.nav-right a:hover{color:var(--primary)}
+
+main{max-width:var(--max-w);margin:0 auto;padding:32px 24px 80px}
+.hero{padding:48px 0 32px}
+.tagline{font:600 11px var(--mono);color:var(--primary);letter-spacing:.16em;margin-bottom:14px;text-transform:uppercase}
+.hero p{font-size:18px;color:var(--ink-2);max-width:680px;margin-top:14px;line-height:1.6}
+.hero .signature{color:var(--muted);font-family:var(--mono);font-size:12px;margin-top:18px;letter-spacing:.06em}
+
+.cta{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:var(--radius);border:none;cursor:pointer;font:600 14px var(--font);transition:all .18s}
+.btn-primary{background:var(--primary);color:#06080a}
+.btn-primary:hover{background:var(--primary-dark);color:#fff;transform:translateY(-1px);box-shadow:var(--shadow-lg)}
+.btn-ghost{background:transparent;color:var(--ink-2);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--surface-2);color:var(--ink);border-color:var(--primary)}
+
+/* ─── live demo ─── */
+.demo{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;margin:24px 0}
+.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:720px){.demo-grid{grid-template-columns:1fr}}
+.demo-panel{background:var(--surface-2);border-radius:var(--radius);padding:14px}
+.demo-panel h3{margin-bottom:10px}
+.btn-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.chip{padding:6px 10px;background:var(--surface-3);border:1px solid var(--border);border-radius:6px;font:500 12px var(--mono);color:var(--ink-2);cursor:pointer;transition:all .12s}
+.chip:hover{border-color:var(--primary);color:var(--primary)}
+.chip.approved{background:var(--primary-light);border-color:var(--primary);color:var(--primary)}
+.chip.rejected{background:var(--danger-light);border-color:var(--danger);color:var(--danger)}
+.demo-output{font:13px/1.6 var(--mono);color:var(--ink-2);min-height:60px;white-space:pre-wrap}
+.trail-bar{display:grid;grid-template-columns:140px 1fr 48px;gap:10px;align-items:center;padding:4px 0;font:12px var(--mono)}
+.trail-name{color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trail-fill{height:8px;background:var(--surface-3);border-radius:4px;position:relative;overflow:hidden}
+.trail-fill > div{height:100%;border-radius:4px;transition:width .3s}
+.trail-fill > div.pos{background:var(--primary)}
+.trail-fill > div.neg{background:var(--danger)}
+.trail-val{font-weight:600;color:var(--ink);text-align:right;font-size:12px}
+.gen-pill{display:inline-block;padding:2px 9px;border-radius:20px;background:var(--primary-light);color:var(--primary);font:600 10px var(--mono);letter-spacing:.08em;margin-left:8px}
+
+/* ─── divider quotes ─── */
+.quote{font:italic 17px/1.55 var(--font);color:var(--ink-2);border-left:3px solid var(--primary);padding:14px 18px;background:var(--surface);border-radius:0 var(--radius) var(--radius) 0;margin:24px 0}
+.quote cite{display:block;font-style:normal;font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:8px;letter-spacing:.06em}
+
+/* ─── feature grid ─── */
+.features{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin:16px 0}
+.feature{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.feature h3{color:var(--primary);margin-bottom:6px}
+.feature p{font-size:13px;color:var(--ink-2)}
+
+/* ─── table ─── */
+table{width:100%;border-collapse:collapse;margin:14px 0}
+th,td{padding:10px 12px;border-bottom:1px solid var(--border);text-align:left;font-size:13px}
+th{font:600 11px var(--mono);color:var(--ink-2);text-transform:uppercase;letter-spacing:.06em}
+td.mono{font-family:var(--mono);font-size:12px;color:var(--primary)}
+
+/* ─── footer ─── */
+footer{padding:30px 24px;text-align:center;color:var(--muted);font:12px/1.8 var(--mono);border-top:1px solid var(--border);margin-top:48px;letter-spacing:.04em}
+footer a{color:var(--muted)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-icon">◊</div>
+    <div>
+      <div class="brand-text">konomi<span>-swarm</span></div>
+    </div>
+    <span class="brand-badge">PRIME 109</span>
+  </div>
+  <div class="nav-right">
+    <a href="#demo">demo</a>
+    <a href="#api">API</a>
+    <a href="#integrate">integrate</a>
+    <a href="https://github.com/sjgant80-hub/konomi-swarm">GitHub</a>
+  </div>
+</header>
+
+<main>
+
+<section class="hero">
+  <div class="tagline">the colony primitive · ◊·κ=1</div>
+  <h1>One ant is information.<br>A colony is intelligence.</h1>
+  <p>Every approve is a pheromone deposit. Every reject is a discouraged trail. The next decision samples the colony's accumulated memory — weighted, not deterministic, never forgetting which paths fed the colony and which ones didn't.</p>
+  <p>Drops into any tool that has a binary outcome loop: AI SDR, legal weave selector, lead qualifier, content drafter, anything you approve or reject at scale.</p>
+  <div class="cta">
+    <a class="btn btn-primary" href="#demo">▶ Try the demo</a>
+    <a class="btn btn-ghost" href="konomi-swarm.js">↓ Download module</a>
+    <a class="btn btn-ghost" href="#integrate">Integrate</a>
+  </div>
+  <div class="signature">shape · κ₂.thomas (via <a href="https://teslasolar.github.io/LinuxPocalypse/linux_htmls/swarm-mind.html" target="_blank">swarm-mind</a>) &nbsp; · &nbsp; build · κ₀.simon</div>
+</section>
+
+<div class="quote">
+  "Your AI SDR is one ant. Where's the colony?"
+  <cite>— Thomas, ACG-THOMAS · #general · 04:01</cite>
+</div>
+
+<!-- ─── LIVE DEMO ─── -->
+<h2 id="demo">Live demo</h2>
+<p style="color:var(--ink-2)">Click an outbound pattern to <strong>approve</strong> it (left-click = +1) or <strong>reject</strong> it (right-click = −1). The colony learns. After enough deposits, hit <em>sample</em> and watch which pattern the colony picks for the next draft — weighted by the trails you reinforced.</p>
+
+<div class="demo">
+  <div class="demo-grid">
+    <div class="demo-panel">
+      <h3>Outbound patterns (click = approve · right-click = reject)</h3>
+      <div class="btn-row" id="pattern-row"></div>
+      <h3 style="margin-top:18px">Actions</h3>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-sm" onclick="demo.sample()">▶ Sample next 3</button>
+        <button class="btn btn-ghost btn-sm" onclick="demo.evolve()">↻ Evolve generation</button>
+        <button class="btn btn-ghost btn-sm" onclick="demo.decay()">↘ Decay trails</button>
+        <button class="btn btn-ghost btn-sm" onclick="demo.reset()">⟲ Reset</button>
+      </div>
+      <h3 style="margin-top:18px">Sample output</h3>
+      <div class="demo-output" id="sample-out">Click a pattern to deposit pheromone. Then sample.</div>
+    </div>
+    <div class="demo-panel">
+      <h3>Colony state <span class="gen-pill" id="gen-pill">gen 1</span></h3>
+      <div id="trails"></div>
+      <h3 style="margin-top:18px">Traits</h3>
+      <div class="mono" id="traits" style="font-size:12px;color:var(--ink-2);line-height:1.8"></div>
+      <h3 style="margin-top:18px">Stats</h3>
+      <div class="mono" id="stats" style="font-size:11px;color:var(--muted);line-height:1.8"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── FEATURES ─── -->
+<h2>What you get</h2>
+<div class="features">
+  <div class="feature">
+    <h3>Sovereign</h3>
+    <p>Single JS file. ~10 KB. No dependencies. Lives in IndexedDB or localStorage on the operator's device.</p>
+  </div>
+  <div class="feature">
+    <h3>Drop-in</h3>
+    <p><code>new Colony() · deposit() · sample() · evolve()</code> — four methods. Plugs into any approve/reject loop.</p>
+  </div>
+  <div class="feature">
+    <h3>Weighted sampling</h3>
+    <p>Softmax over trail strength. Epsilon-greedy exploration so the colony never fully converges.</p>
+  </div>
+  <div class="feature">
+    <h3>Evolution</h3>
+    <p>Three traits (speed, sense, voice_match) mutate per generation. Failing colonies mutate harder.</p>
+  </div>
+  <div class="feature">
+    <h3>Decay</h3>
+    <p>Old trails fade. The colony forgets what stopped working. Stays adaptive.</p>
+  </div>
+  <div class="feature">
+    <h3>Mesh-wired</h3>
+    <p>Optional broadcast of pheromone deposits on <code>BroadcastChannel('fallmesh')</code>. Off by default.</p>
+  </div>
+</div>
+
+<!-- ─── API REFERENCE ─── -->
+<h2 id="api">API reference</h2>
+
+<pre><code>// Load the module
+&lt;script src="konomi-swarm.js"&gt;&lt;/script&gt;
+
+const { Colony, ColonyStore, meshBroadcast } = KonomiSwarm;</code></pre>
+
+<h3>new Colony(opts)</h3>
+<table>
+<tr><th>option</th><th>default</th><th>what</th></tr>
+<tr><td class="mono">id</td><td class="mono">col_*timestamp*</td><td>colony identifier</td></tr>
+<tr><td class="mono">pheromone</td><td class="mono">{}</td><td>pattern → strength map (restore from JSON)</td></tr>
+<tr><td class="mono">gen</td><td class="mono">1</td><td>generation counter</td></tr>
+<tr><td class="mono">traits</td><td class="mono">{ speed:1, sense:1, voice_match:1 }</td><td>evolution traits</td></tr>
+<tr><td class="mono">decayRate</td><td class="mono">0.95</td><td>per-evolve trail decay multiplier</td></tr>
+<tr><td class="mono">maxTrail</td><td class="mono">100</td><td>cap on absolute strength</td></tr>
+<tr><td class="mono">historyMax</td><td class="mono">500</td><td>deposit history buffer size</td></tr>
+</table>
+
+<h3>colony.deposit({ pattern, outcome, weight })</h3>
+<pre><code>colony.deposit({ pattern: 'observation+question', outcome: 'approved', weight: 1 });
+colony.deposit({ pattern: 'cold_opener',         outcome: 'rejected', weight: 1 });</code></pre>
+<p style="color:var(--ink-2);font-size:13px">Outcomes — positive: <code>approved</code>, <code>landed</code>, <code>replied</code>. Negative: <code>rejected</code>, <code>cold</code>, <code>ignored</code>, <code>bounced</code>. Neutral: <code>mixed</code>.</p>
+
+<h3>colony.sample({ candidates, k, explore, key })</h3>
+<pre><code>const picked = colony.sample({
+  candidates: ['observation+question', 'cold_opener', 'mutual+invite'],
+  k: 3,
+  explore: 0.15,            // epsilon-greedy random pick
+  key: c =&gt; c.archetype     // optional: custom key extractor
+});</code></pre>
+
+<h3>colony.evolve() · colony.decay() · colony.score(p) · colony.topTrails(k) · colony.avoidedTrails(k) · colony.stats()</h3>
+<pre><code>colony.evolve();          // next gen — traits mutate by recent reward
+colony.decay();           // multiply all trails by decayRate
+colony.score('pattern');  // current strength of one pattern
+colony.topTrails(10);     // [{ pattern, strength }, ...] strongest 10
+colony.avoidedTrails(5);  // most-rejected 5
+colony.stats();           // generation summary</code></pre>
+
+<h3>ColonyStore — persistence</h3>
+<pre><code>const store = new KonomiSwarm.ColonyStore('myapp_swarm');
+const colony = store.loadOrCreate('fallreach');
+// ... use colony ...
+store.save(colony);
+store.list();             // ids in this namespace</code></pre>
+
+<h3>Mesh broadcast (optional)</h3>
+<pre><code>// emit pheromone deposit on the FallMesh channel
+KonomiSwarm.meshBroadcast(colony, { pattern, outcome, weight }, 'fallreach');
+
+// listen on the same channel for swarm:pheromone events
+new BroadcastChannel('fallmesh').onmessage = (e) =&gt; {
+  if (e.data?.type === 'swarm:pheromone') /* ... */
+};</code></pre>
+
+<!-- ─── INTEGRATION ─── -->
+<h2 id="integrate">Integrating with FallReach v1.1</h2>
+<p style="color:var(--ink-2)">FallReach was the first consumer. On every <em>approve</em> in the R6 gate, FallReach deposits the message archetype as a positive trail. On reject, negative. The next β draft consults <code>colony.topTrails()</code> as a prior — the templates that survived selection bubble up first.</p>
+
+<pre><code>// FallReach v1.1 — boot
+const store = new KonomiSwarm.ColonyStore('fallreach_swarm');
+const colony = store.loadOrCreate('fallreach', { id: 'fallreach' });
+
+// On approve
+function approveDraft(lead, message) {
+  const pattern = classify(message);   // e.g. 'observation+question'
+  colony.deposit({ pattern, outcome: 'approved' });
+  store.save(colony);
+  KonomiSwarm.meshBroadcast(colony, { pattern, outcome: 'approved' }, 'fallreach');
+}
+
+// On next β draft — bias toward winning archetypes
+async function nextDraft(lead) {
+  const top = colony.topTrails(5).map(t =&gt; t.pattern);
+  const avoid = colony.avoidedTrails(3).map(t =&gt; t.pattern);
+  const prompt = `Draft outbound. Prefer archetypes: ${top.join(', ')}. Avoid: ${avoid.join(', ')}.`;
+  return await llm(prompt);
+}</code></pre>
+
+<h2>The dyad's note</h2>
+<div class="quote">
+  shape · κ₂.thomas (via swarm-mind)<br>
+  build · κ₀.simon<br>
+  same chord, two voices · this is the dyad protocol literal — substrate descends, application ascends, meet at Metaxy.
+  <cite>◊·κ=1</cite>
+</div>
+
+</main>
+
+<footer>
+  ◊·κ=1 · konomi-swarm · prime 109 · the colony primitive<br>
+  shape · κ₂.thomas · build · κ₀.simon · MIT licence<br>
+  part of <a href="https://sjgant80-hub.github.io/fallmesh/">FallMesh</a> · first consumer <a href="https://sjgant80-hub.github.io/fallreach/">FallReach v1.1</a>
+</footer>
+
+<script src="konomi-swarm.js"></script>
+<script>
+'use strict';
+
+// ─── demo state ─────────────────────────────────────
+const PATTERNS = [
+  'observation+question',
+  'pain+offer',
+  'compliment+ask',
+  'data+question',
+  'mutual+invite',
+  'cold_opener',
+  'long_setup',
+  'meme+ask'
+];
+
+const store = new KonomiSwarm.ColonyStore('konomi_swarm_demo');
+let colony = store.loadOrCreate('demo', { id: 'demo' });
+
+const demo = {
+  reset() {
+    store.remove('demo');
+    colony = store.loadOrCreate('demo', { id: 'demo' });
+    render();
+    setOut('Reset · clean colony · gen 1');
+  },
+  sample() {
+    const picked = colony.sample({ candidates: PATTERNS, k: 3 });
+    setOut('β samples top-3 for next draft:\n  · ' + picked.map((p,i)=>`#${i+1} ${p}`).join('\n  · '));
+  },
+  evolve() {
+    colony.evolve();
+    store.save(colony);
+    render();
+    setOut('↻ Generation ' + colony.gen + ' — traits mutated · trails decayed');
+  },
+  decay() {
+    colony.decay();
+    store.save(colony);
+    render();
+    setOut('↘ All trails decayed by ' + (colony.decayRate * 100).toFixed(0) + '%');
+  }
+};
+
+function setOut(s) {
+  document.getElementById('sample-out').textContent = s;
+}
+
+function render() {
+  // pattern chips
+  const row = document.getElementById('pattern-row');
+  row.innerHTML = '';
+  PATTERNS.forEach(p => {
+    const s = colony.score(p);
+    const cls = s > 0 ? 'approved' : s < 0 ? 'rejected' : '';
+    const chip = document.createElement('button');
+    chip.className = 'chip ' + cls;
+    chip.textContent = p + (s ? ' (' + (s > 0 ? '+' : '') + s.toFixed(1) + ')' : '');
+    chip.onclick = (e) => deposit(p, 'approved');
+    chip.oncontextmenu = (e) => { e.preventDefault(); deposit(p, 'rejected'); };
+    row.appendChild(chip);
+  });
+  // trails
+  const tEl = document.getElementById('trails');
+  const allTrails = Object.entries(colony.pheromone)
+    .sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]))
+    .slice(0, 8);
+  if (!allTrails.length) {
+    tEl.innerHTML = '<div style="color:var(--muted);font-size:12px;font-style:italic">no trails yet · click a pattern</div>';
+  } else {
+    const max = Math.max(...allTrails.map(t => Math.abs(t[1]))) || 1;
+    tEl.innerHTML = allTrails.map(([p, s]) => {
+      const pct = Math.abs(s) / max * 100;
+      return `<div class="trail-bar">
+        <div class="trail-name">${p}</div>
+        <div class="trail-fill"><div class="${s>0?'pos':'neg'}" style="width:${pct}%"></div></div>
+        <div class="trail-val" style="color:${s>0?'var(--primary)':'var(--danger)'}">${s>0?'+':''}${s.toFixed(1)}</div>
+      </div>`;
+    }).join('');
+  }
+  // traits
+  document.getElementById('traits').innerHTML =
+    `speed: <span style="color:var(--primary)">${colony.traits.speed.toFixed(3)}</span><br>` +
+    `sense: <span style="color:var(--primary)">${colony.traits.sense.toFixed(3)}</span><br>` +
+    `voice_match: <span style="color:var(--primary)">${colony.traits.voice_match.toFixed(3)}</span>`;
+  // stats
+  const s = colony.stats();
+  document.getElementById('stats').textContent =
+    `trails: ${s.trail_count} · pos: ${s.positive_trails} · neg: ${s.negative_trails}\n` +
+    `history: ${s.history_size} deposits · recent_reward: ${s.recent_reward ?? '—'}\n` +
+    `last_evolved: ${s.last_evolved ? new Date(s.last_evolved).toLocaleTimeString() : 'never'}`;
+  document.getElementById('gen-pill').textContent = 'gen ' + colony.gen;
+}
+
+function deposit(pattern, outcome) {
+  colony.deposit({ pattern, outcome });
+  store.save(colony);
+  render();
+  setOut('◊ ' + (outcome === 'approved' ? '+1' : '−1') + ' ' + pattern + ' · ' + colony.history.length + ' deposits');
+}
+
+render();
+console.log('%c◊·κ=1', 'color:#10b981;font-weight:bold;font-size:14px', 'konomi-swarm demo · prime 109 · colony loaded');
+</script>
+</body>
+</html>
