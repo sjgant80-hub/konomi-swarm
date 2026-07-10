@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2026 Simon Gant · AI Native Solutions
+Copyright (c) 2026 AI-Native Solutions
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -11,13 +11,6 @@ furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
-
-The shape of the colony primitive — multi-agent foraging with pheromone trails,
-generational evolution, and predator dynamics — was originally explored by
-Thomas Frumkin in swarm-mind.html
-(https://teslasolar.github.io/LinuxPocalypse/linux_htmls/swarm-mind.html).
-This implementation is an independent JavaScript re-expression of that shape,
-sovereign and standalone, written for plug-in use across the FallMesh estate.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
